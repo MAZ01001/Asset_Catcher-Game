@@ -2,11 +2,16 @@ using UnityEngine;
 
 public class GameScript:MonoBehaviour{
     [SerializeField][Tooltip("The Player Game Object")]private GameObject Player;
-    // [SerializeField][Tooltip("The Background Material")]private Material Background;
+    [SerializeField][Tooltip("The Background Material")]private Material Background;
 
     private InputProvider input;
 
     void Start(){this.input=this.GetComponent<InputProvider>();}
+
+    void LateUpdate(){
+        // TODO
+        // Background.offset.x
+    }
 
     public void OnPause(){
         Time.timeScale=0f;
