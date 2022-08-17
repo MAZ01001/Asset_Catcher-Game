@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GameScript:MonoBehaviour{
     [SerializeField][Tooltip("The Player Game Object")]private GameObject Player;
+    // [SerializeField][Tooltip("The Background Material")]private Material Background;
 
     private InputProvider input;
 

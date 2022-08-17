@@ -43,15 +43,11 @@ public class PlayerMovements:MonoBehaviour{
         }
 
         //~ jump
+        if(this.input.jumpPressed)this.jumpToggle=true;
+        else if(!this.input.jumpPressed)this.jumpToggle=false;
         if(
-            this.input.jumpPressed
-            &&!this.jumpToggle
-        ){
-            this.jumpToggle=true;
-            if(this.onGround)this.rb.AddForce(Physics.gravity*(this.jumpHeight*-10f),ForceMode.Force);
-        }else if(
-            !this.input.jumpPressed
+            this.onGround
             &&this.jumpToggle
-        )this.jumpToggle=false;
+        )this.rb.AddForce(Physics.gravity*(this.jumpHeight*-10f),ForceMode.Force);
     }
 }
