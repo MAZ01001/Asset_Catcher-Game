@@ -10,7 +10,8 @@ public class GameScript:MonoBehaviour{
 
     void LateUpdate(){
         // TODO
-        // Background.offset.x
+        // Player.transform.position
+        // Background.mainTextureOffset=new Vector2(0f,0f);
     }
 
     public void OnPause(){

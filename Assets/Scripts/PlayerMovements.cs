@@ -5,6 +5,7 @@ public class PlayerMovements:MonoBehaviour{
     [SerializeField][Tooltip("The Jump Height")]private float jumpHeight=6f;
     [SerializeField][Tooltip("The Movement Speed")]private float moveSpeed=10f;
     [SerializeField][Tooltip("The Movement Smoothing Value")]private float moveSmooth=0.1f;
+    [SerializeField][Tooltip("The Movement Multiplier for in-air movement")]private float airMoveMultiplier=0.7f;
 
     private InputProvider input;
     private SphereCollider sc;
@@ -21,15 +22,13 @@ public class PlayerMovements:MonoBehaviour{
     }
 
     private void FixedUpdate(){
-        //~ ground check
-        this.onGround=Physics.CheckSphere(this.transform.position+(Vector3.down*this.sc.radius),0.1f,this.groundLayer);
-
         //~ move
         if(
             this.input.move>0.05f
             ||this.input.move<-0.05f
         ){
-            this.moveDir=(Vector3.right*this.input.move).normalized*(this.moveSpeed*(this.onGround?1f:0.7f));//~ slower movement in air
+            this.moveDir=(Vector3.right*this.input.move).normalized*this.moveSpeed;
+            if(!this.onGround)this.moveDir*=this.airMoveMultiplier;//~ slower movement in air
             this.rb.velocity=Vector3.SmoothDamp(
                 this.rb.velocity,
                 new Vector3(
@@ -43,11 +42,20 @@ public class PlayerMovements:MonoBehaviour{
         }
 
         //~ jump
-        if(this.input.jumpPressed)this.jumpToggle=true;
-        else if(!this.input.jumpPressed)this.jumpToggle=false;
         if(
-            this.onGround
-            &&this.jumpToggle
-        )this.rb.AddForce(Physics.gravity*(this.jumpHeight*-10f),ForceMode.Force);
+            this.input.jumpPressed
+            &&this.onGround
+        )this.jumpToggle=true;
+        if(this.jumpToggle){
+            this.jumpToggle=false;
+            this.rb.AddForce(Physics.gravity*(this.jumpHeight*-10f),ForceMode.Force);
+        }
     }
+
+    // TODO
+    //~ ground check
+    private bool CheckIsLayerInMask(LayerMask mask,int layer){return mask==(mask|(1<<layer));}
+    private void OnCollisionEnter(Collision collision){if(this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer))this.onGround=true;}
+    private void OnCollisionExit(Collision collision){if(this.onGround&&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer))this.onGround=false;}
+
 }
