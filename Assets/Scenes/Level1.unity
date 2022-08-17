@@ -1534,3 +1534,4 @@ MonoBehaviour:
   jumpHeight: 6
   moveSpeed: 10
   moveSmooth: 0.1
+  airMoveMultiplier: 0.7
