@@ -42,20 +42,33 @@ public class PlayerMovements:MonoBehaviour{
         }
 
         //~ jump
-        if(
-            this.input.jumpPressed
-            &&this.onGround
-        )this.jumpToggle=true;
-        if(this.jumpToggle){
-            this.jumpToggle=false;
-            this.rb.AddForce(Physics.gravity*(this.jumpHeight*-10f),ForceMode.Force);
+        if(this.onGround){
+            if(
+                this.input.jumpPressed
+                &&!this.jumpToggle
+            ){
+                this.rb.AddForce(Physics.gravity*(this.jumpHeight*-10f),ForceMode.Force);
+                this.jumpToggle=true;
+            }else if(
+                !this.input.jumpPressed
+                &&this.jumpToggle
+            )this.jumpToggle=false;
         }
     }
 
-    // TODO
     //~ ground check
     private bool CheckIsLayerInMask(LayerMask mask,int layer){return mask==(mask|(1<<layer));}
-    private void OnCollisionEnter(Collision collision){if(this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer))this.onGround=true;}
-    private void OnCollisionExit(Collision collision){if(this.onGround&&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer))this.onGround=false;}
+    private void OnCollisionEnter(Collision collision){
+        if(
+            !this.onGround
+            &&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer)
+        )this.onGround=true;
+    }
+    private void OnCollisionExit(Collision collision){
+        if(
+            this.onGround
+            &&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer)
+        )this.onGround=false;
+    }
 
 }
