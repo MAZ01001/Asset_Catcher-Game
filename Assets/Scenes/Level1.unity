@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -155,12 +155,20 @@ MonoBehaviour:
   Player: {fileID: 1951393520}
   PointsDisplay: {fileID: 635283553}
   TimeDisplay: {fileID: 1437793305}
+  countdown: 60
   Background: {fileID: 2100000, guid: e89cddf8858029041a4889223782c808, type: 2}
   BackgroundXOffsetMultiplier: 0.015
-  BackgroundYOffsetMultiplier: 0.015
+  BackgroundspawnYOffsetMultiplier: 0.015
   BackgroundXOffset: -0.14
-  BackgroundYOffset: -0.22
-  time: 60
+  BackgroundspawnYOffset: -0.22
+  commonPrimitive: {fileID: 6935849936085445891, guid: 90f2ee885a305dc4086053bae592efcc, type: 3}
+  rarePrimitive: {fileID: 9219938930692707684, guid: 86c91aaf05520f34a9f3c327b808496e, type: 3}
+  spawnParent: {fileID: 1819299483}
+  spawnRareRate: 0.1
+  spawnRate: 0.5
+  spawnRateOffset: 0
+  spawnMaxXOffset: 7
+  spawnYOffset: 13
 --- !u!4 &234657317
 Transform:
   m_ObjectHideFlags: 0
@@ -1309,6 +1317,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1369832467}
   m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1819299483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1819299484}
+  m_Layer: 0
+  m_Name: Spawning
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1819299484
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1819299483}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.562896, y: 4.2389927, z: 16.385511}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1951393520
 GameObject:
