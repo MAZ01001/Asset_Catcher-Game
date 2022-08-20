@@ -10,6 +10,7 @@ public class GameScript:MonoBehaviour{
     [SerializeField][Tooltip("The starting time for the countdown in seconds")]private int countdown=60;
     [SerializeField][Tooltip("The pause menu ui element")]private GameObject pauseMenu;
     [SerializeField][Tooltip("The game over menu ui element")]private GameObject gameOverMenu;
+    [SerializeField][Tooltip("The highscore ui element")]private GameObject highscore;
     [Header("Background effect")]
     [SerializeField][Tooltip("The background material")]private Material background;
     [SerializeField][Tooltip("The background material main X offset multiplier")]private float backgroundXOffsetMultiplier=0.015f;
@@ -33,6 +34,7 @@ public class GameScript:MonoBehaviour{
 
     private TextMeshProUGUI pointsTMPro;
     private TextMeshProUGUI timeTMPro;
+    private TextMeshProUGUI highscoreTMPro;
     private InputProvider input;
     private int points=0;
 
@@ -48,6 +50,7 @@ public class GameScript:MonoBehaviour{
         this.input=this.GetComponent<InputProvider>();
         this.pointsTMPro=this.pointsDisplay.GetComponent<TextMeshProUGUI>();
         this.timeTMPro=this.timeDisplay.GetComponent<TextMeshProUGUI>();
+        this.highscoreTMPro=this.highscore.GetComponent<TextMeshProUGUI>();
         this.AddPoints(0);
         this.countdown+=1;
         InvokeRepeating("SpawnPrimitive",1f,this.spawnRate);
@@ -123,6 +126,7 @@ public class GameScript:MonoBehaviour{
         Time.timeScale=0f;
         CancelInvoke("TimerEvents");
         CancelInvoke("SpawnPrimitive");
+        this.highscoreTMPro.text=$"Highscore\n{this.points}";
         this.gameOverMenu.SetActive(true);
         Cursor.visible=true;
         Cursor.lockState=CursorLockMode.None;

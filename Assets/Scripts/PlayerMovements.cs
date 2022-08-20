@@ -60,13 +60,13 @@ public class PlayerMovements:MonoBehaviour{
     }
 
     //~ ground check
-    private bool CheckIsLayerInMask(LayerMask mask,int layer){return mask==(mask|(1<<layer));}
+    private bool CheckIsLayerInMask(LayerMask mask,int layer){return(mask&(1<<layer))!=0;}
     private void OnCollisionEnter(Collision collision){
-        if(
+        if(this.CheckIsLayerInMask(this.primitiveLayer,collision.gameObject.layer))this.gameScript.ExplodePrimitive(collision.gameObject);
+        else if(
             !this.onGround
             &&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer)
         )this.onGround=true;
-        else if(this.CheckIsLayerInMask(this.primitiveLayer,collision.gameObject.layer))this.gameScript.ExplodePrimitive(collision.gameObject);
     }
     private void OnCollisionExit(Collision collision){
         if(
