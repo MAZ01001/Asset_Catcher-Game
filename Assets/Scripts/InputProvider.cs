@@ -18,9 +18,10 @@ public class InputProvider:MonoBehaviour{
         Cursor.visible=true;
     }
 
-    void OnMove(InputValue value){this.move=value.Get<float>();}
-    void OnJump(InputValue value){this.jumpPressed=value.isPressed;}
-    void OnPause(InputValue value){
+    private void OnMove(InputValue value){this.move=value.Get<float>();}
+    private void OnJump(InputValue value){this.jumpPressed=value.isPressed;}
+    private void OnPause(InputValue value){
+        if(this.gameScript.gameOver)return;
         if(value.isPressed){
             if(Time.timeScale>0.001f)this.gameScript.OnPause();
             else this.gameScript.OnResume();

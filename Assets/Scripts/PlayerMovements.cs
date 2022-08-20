@@ -1,11 +1,12 @@
 using UnityEngine;
 
 public class PlayerMovements:MonoBehaviour{
-    [SerializeField][Tooltip("The Ground Collision Layer")]private LayerMask groundLayer;
-    [SerializeField][Tooltip("The Jump Height")]private float jumpHeight=6f;
-    [SerializeField][Tooltip("The Movement Speed")]private float moveSpeed=10f;
-    [SerializeField][Tooltip("The Movement Smoothing Value")]private float moveSmooth=0.1f;
-    [SerializeField][Tooltip("The Movement Multiplier for in-air movement")]private float airMoveMultiplier=0.7f;
+    [SerializeField][Tooltip("The ground collision layer")]private LayerMask groundLayer;
+    [SerializeField][Tooltip("The primitive collision layer")]private LayerMask primitiveLayer;
+    [SerializeField][Tooltip("The jump height")]private float jumpHeight=6f;
+    [SerializeField][Tooltip("The movement speed")]private float moveSpeed=10f;
+    [SerializeField][Tooltip("The movement smoothing value")]private float moveSmooth=0.1f;
+    [SerializeField][Tooltip("The movement multiplier for in-air movement")]private float airMoveMultiplier=0.7f;
 
     private InputProvider input;
     private SphereCollider sc;
@@ -14,11 +15,13 @@ public class PlayerMovements:MonoBehaviour{
     private Vector3 smoothVelocity=Vector3.zero;
     private bool onGround=false;
     private bool jumpToggle=false;
+    private GameScript gameScript;
 
     void Start(){
         this.input=this.GetComponent<InputProvider>();
         this.sc=this.GetComponent<SphereCollider>();
         this.rb=this.GetComponent<Rigidbody>();
+        this.gameScript=Object.FindObjectOfType<GameScript>();
     }
 
     private void FixedUpdate(){
@@ -63,6 +66,7 @@ public class PlayerMovements:MonoBehaviour{
             !this.onGround
             &&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer)
         )this.onGround=true;
+        else if(this.CheckIsLayerInMask(this.primitiveLayer,collision.gameObject.layer))this.gameScript.ExplodePrimitive(collision.gameObject);
     }
     private void OnCollisionExit(Collision collision){
         if(
