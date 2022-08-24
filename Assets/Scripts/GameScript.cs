@@ -2,12 +2,14 @@ using UnityEngine;
 using TMPro;
 
 public class GameScript:MonoBehaviour{
+    //~ inspector (private)
     [Header("Player")]
     [SerializeField][Tooltip("The player game object")]private GameObject player;
     [Header("Display")]
     [SerializeField][Tooltip("The points display game object")]private GameObject pointsDisplay;
     [SerializeField][Tooltip("The time display game object")]private GameObject timeDisplay;
     [SerializeField][Tooltip("The starting time for the countdown in seconds")]private int countdown=60;
+    [SerializeField][Tooltip("The menu background ui element")]private GameObject menuBackground;
     [SerializeField][Tooltip("The pause menu ui element")]private GameObject pauseMenu;
     [SerializeField][Tooltip("The game over menu ui element")]private GameObject gameOverMenu;
     [SerializeField][Tooltip("The highscore ui element")]private GameObject highscore;
@@ -29,15 +31,15 @@ public class GameScript:MonoBehaviour{
     [SerializeField][Tooltip("The spawn rate per second for frenzy mode")]private float spawnRateFrenzy=0.2f;
     [SerializeField][Tooltip("The max x offset for random spawning")]private float spawnMaxXOffset=7f;
     [SerializeField][Tooltip("The y offset for random spawning")]private float spawnYOffset=13f;
-
+    //~ public
     [HideInInspector]public bool gameOver=false;
-
+    //~ private
     private TextMeshProUGUI pointsTMPro;
     private TextMeshProUGUI timeTMPro;
     private TextMeshProUGUI highscoreTMPro;
     private InputProvider input;
     private int points=0;
-
+    //~ get components and start timer/spawner
     private void Awake(){Time.timeScale=1f;}
     private void Start(){
         DespawnDetection tmpDD=this.commonPrimitive.GetComponent<DespawnDetection>();
@@ -56,7 +58,7 @@ public class GameScript:MonoBehaviour{
         InvokeRepeating("SpawnPrimitive",1f,this.spawnRate);
         InvokeRepeating("TimerEvents",0f,1f);
     }
-
+    //~ time, display, frenzy mode, and game over
     public void AddPoints(int morePoints){this.pointsTMPro.text=$"Punkte: "+(this.points+=morePoints);}
     public void TimerEvents(){
         this.countdown-=1;
@@ -67,7 +69,7 @@ public class GameScript:MonoBehaviour{
         }
         this.timeTMPro.text=$"Zeit:      {this.countdown}";
     }
-
+    //~ background effect
     private void LateUpdate(){
         Vector3 ppos=player.transform.position;
         background.mainTextureOffset=new Vector2(
@@ -75,10 +77,10 @@ public class GameScript:MonoBehaviour{
             (ppos.y*this.backgroundspawnYOffsetMultiplier)+this.backgroundspawnYOffset
         );
     }
-
+    //~ primitive spawn/explode
     public void SpawnPrimitive(){
         float common=Random.Range(0f,1f);
-        Instantiate(
+        Instantiate<GameObject>(
             (
                 common<=this.spawnRareRate?this.rarePrimitive
                 :common<=this.spawnUncommonRate?this.uncommonPrimitive
@@ -108,10 +110,11 @@ public class GameScript:MonoBehaviour{
             Destroy(primitive);
         }
     }
-
+    //~ menus
     public void OnPause(){
         Time.timeScale=0f;
         this.pauseMenu.SetActive(true);
+        this.menuBackground.SetActive(true);
         Cursor.visible=true;
         Cursor.lockState=CursorLockMode.None;
     }
@@ -119,6 +122,7 @@ public class GameScript:MonoBehaviour{
         Cursor.lockState=CursorLockMode.Locked;
         Cursor.visible=false;
         this.pauseMenu.SetActive(false);
+        this.menuBackground.SetActive(false);
         Time.timeScale=1f;
     }
     public void OnGameOver(){
@@ -128,6 +132,7 @@ public class GameScript:MonoBehaviour{
         CancelInvoke("SpawnPrimitive");
         this.highscoreTMPro.text=$"Highscore\n{this.points}";
         this.gameOverMenu.SetActive(true);
+        this.menuBackground.SetActive(true);
         Cursor.visible=true;
         Cursor.lockState=CursorLockMode.None;
     }

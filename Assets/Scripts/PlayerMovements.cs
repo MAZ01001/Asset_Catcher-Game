@@ -1,13 +1,14 @@
 using UnityEngine;
 
 public class PlayerMovements:MonoBehaviour{
+    //~ inspector (private)
     [SerializeField][Tooltip("The ground collision layer")]private LayerMask groundLayer;
-    [SerializeField][Tooltip("The primitive collision layer")]private LayerMask primitiveLayer;
+    [SerializeField][Tooltip("The primitive trigger layer")]private LayerMask primitiveTriggerLayer;
     [SerializeField][Tooltip("The jump height")]private float jumpHeight=6f;
     [SerializeField][Tooltip("The movement speed")]private float moveSpeed=10f;
     [SerializeField][Tooltip("The movement smoothing value")]private float moveSmooth=0.1f;
     [SerializeField][Tooltip("The movement multiplier for in-air movement")]private float airMoveMultiplier=0.7f;
-
+    //~ private
     private InputProvider input;
     private SphereCollider sc;
     private Rigidbody rb;
@@ -16,14 +17,14 @@ public class PlayerMovements:MonoBehaviour{
     private bool onGround=false;
     private bool jumpToggle=false;
     private GameScript gameScript;
-
+    //~ get components
     void Start(){
         this.input=this.GetComponent<InputProvider>();
         this.sc=this.GetComponent<SphereCollider>();
         this.rb=this.GetComponent<Rigidbody>();
         this.gameScript=Object.FindObjectOfType<GameScript>();
     }
-
+    //~ movement
     private void FixedUpdate(){
         //~ move
         if(
@@ -58,12 +59,15 @@ public class PlayerMovements:MonoBehaviour{
             )this.jumpToggle=false;
         }
     }
-
-    //~ ground check
+    //~ collision checks
     private bool CheckIsLayerInMask(LayerMask mask,int layer){return(mask&(1<<layer))!=0;}
+    //~ collect primitive
+    private void OnTriggerEnter(Collider collider){
+        if(this.CheckIsLayerInMask(this.primitiveTriggerLayer,collider.gameObject.layer))this.gameScript.ExplodePrimitive(collider.transform.parent.gameObject);
+    }
+    //~ ground check
     private void OnCollisionEnter(Collision collision){
-        if(this.CheckIsLayerInMask(this.primitiveLayer,collision.gameObject.layer))this.gameScript.ExplodePrimitive(collision.gameObject);
-        else if(
+        if(
             !this.onGround
             &&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer)
         )this.onGround=true;
@@ -74,5 +78,4 @@ public class PlayerMovements:MonoBehaviour{
             &&this.CheckIsLayerInMask(this.groundLayer,collision.gameObject.layer)
         )this.onGround=false;
     }
-
 }
