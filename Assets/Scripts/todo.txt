@@ -1,0 +1,9 @@
+extra script for spawner on the spawner obj ~ delete-collider-obj
+transform position of spawner (for spawning random/middle)
+(middle) ~ offset collider? (for despawning)
+
+# spawn area
+spreed=[5,0,0]
+offset=[0,0,0] // if collider can not be offsetted
+
+|<---{origin}--->| 5units
