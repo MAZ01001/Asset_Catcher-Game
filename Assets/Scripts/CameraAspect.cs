@@ -19,6 +19,7 @@ public class CameraAspect:MonoBehaviour{
         if(!(this.lastScreenWidth==Screen.width&&this.lastScreenHeight==Screen.height)){//~ only if screen size is different from last update
             this.lastScreenWidth=Screen.width;
             this.lastScreenHeight=Screen.height;
+            // TODO division to Start()
             //~ black bars if camera aspect is not supported
             float targetaspect=this.aspectHorizontal/this.aspectVertical;
             float windowaspect=(float)this.lastScreenWidth/(float)this.lastScreenHeight;
