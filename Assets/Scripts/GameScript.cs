@@ -79,6 +79,7 @@ public class GameScript:MonoBehaviour{
     }
     //~ primitive spawn/explode
     public void SpawnPrimitive(){
+        // TODO externealise to another script
         float common=Random.Range(0f,1f);
         Instantiate<GameObject>(
             (
