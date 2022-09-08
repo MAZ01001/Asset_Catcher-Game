@@ -20,15 +20,13 @@ public class GameScript:MonoBehaviour{
     [SerializeField][Tooltip("The background material main X offset")]private float backgroundXOffset=-0.14f;
     [SerializeField][Tooltip("The background material main Y offset")]private float backgroundspawnYOffset=-0.22f;
     [Header("Spawner")]
-    [SerializeField][Tooltip("The common primitive to spawn")]private GameObject commonPrimitive;
-    [SerializeField][Tooltip("The uncommon primitive to spawn")]private GameObject uncommonPrimitive;
-    [SerializeField][Tooltip("The rare primitive to spawn")]private GameObject rarePrimitive;
     [SerializeField][Tooltip("The parent game object for the spawning objects this is also used for despawning the primitives outside its collider trigger")]private GameObject spawnParent;
-    [SerializeField][Tooltip("The persentage for how common the `uncommonPrimitive` is realtive to the `commonPrimitive`")]private float spawnUncommonRate=0.1f;
-    [SerializeField][Tooltip("The persentage for how common the `rarePrimitive` is realtive to the `commonPrimitive`")]private float spawnRareRate=0.02f;
+    [SerializeField][Tooltip("The primitives to spawn (in order of rarity)")]private GameObject[] primitives;
+    [SerializeField][Tooltip("The rarities for each element in the `primitives` array")]private float[] spawnRateRarities;
     [SerializeField][Tooltip("The spawn rate per second")]private float spawnRate=0.4f;
     [SerializeField][Tooltip("The countdown time to activate frenzy mode")]private int frenzyTime=10;
     [SerializeField][Tooltip("The spawn rate per second for frenzy mode")]private float spawnRateFrenzy=0.2f;
+    // TODO
     [SerializeField][Tooltip("The max x offset for random spawning")]private float spawnMaxXOffset=7f;
     [SerializeField][Tooltip("The y offset for random spawning")]private float spawnYOffset=13f;
     //~ public
@@ -42,13 +40,7 @@ public class GameScript:MonoBehaviour{
     //~ get components and start timer/spawner
     private void Awake(){Time.timeScale=1f;}
     private void Start(){
-        DespawnDetection tmpDD=this.commonPrimitive.GetComponent<DespawnDetection>();
-        tmpDD.despawnColliderObject=this.spawnParent;
-        tmpDD=this.uncommonPrimitive.GetComponent<DespawnDetection>();
-        tmpDD.despawnColliderObject=this.spawnParent;
-        tmpDD=this.rarePrimitive.GetComponent<DespawnDetection>();
-        tmpDD.despawnColliderObject=this.spawnParent;
-
+        foreach(GameObject primitive in this.primitives)primitive.GetComponent<DespawnDetection>().despawnColliderObject=this.spawnParent;
         this.input=this.GetComponent<InputProvider>();
         this.pointsTMPro=this.pointsDisplay.GetComponent<TextMeshProUGUI>();
         this.timeTMPro=this.timeDisplay.GetComponent<TextMeshProUGUI>();
@@ -64,6 +56,7 @@ public class GameScript:MonoBehaviour{
         this.countdown-=1;
         if(this.countdown<=0)this.OnGameOver();
         else if(this.countdown<=this.frenzyTime){
+            // TODO reference to method if in other script
             CancelInvoke("SpawnPrimitive");
             InvokeRepeating("SpawnPrimitive",0f,this.spawnRateFrenzy);
         }
@@ -83,9 +76,14 @@ public class GameScript:MonoBehaviour{
         float common=Random.Range(0f,1f);
         Instantiate<GameObject>(
             (
-                common<=this.spawnRareRate?this.rarePrimitive
-                :common<=this.spawnUncommonRate?this.uncommonPrimitive
-                :this.commonPrimitive
+                // TODO !not ?! possible ?!!
+                // FIXME
+                this.primitives[
+                    Mathf.FloorToInt(
+                        (1f/(float)Random.Range(1,this.primitives.Length+1))
+                        *(this.primitives.Length-1)
+                    )
+                ]
             ),
             new Vector3(
                 Random.Range(-this.spawnMaxXOffset,this.spawnMaxXOffset),
@@ -98,18 +96,8 @@ public class GameScript:MonoBehaviour{
     }
     public void ExplodePrimitive(GameObject primitive){
         // TODO explosions
-        if(primitive.name==$"{commonPrimitive.name}(Clone)"){
-            this.AddPoints(1);
-            Destroy(primitive);
-        }
-        else if(primitive.name==$"{uncommonPrimitive.name}(Clone)"){
-            this.AddPoints(4);
-            Destroy(primitive);
-        }
-        else if(primitive.name==$"{rarePrimitive.name}(Clone)"){
-            this.AddPoints(8);
-            Destroy(primitive);
-        }
+        this.AddPoints((System.Array.IndexOf<GameObject>(this.primitives,primitive)+1)*4);
+        Destroy(primitive);
     }
     //~ menus
     public void OnPause(){
