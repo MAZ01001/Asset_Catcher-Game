@@ -22,7 +22,7 @@ public class GameScript:MonoBehaviour{
     [Header("Spawner")]
     [SerializeField][Tooltip("The parent game object for the spawning objects this is also used for despawning the primitives outside its collider trigger")]private GameObject spawnParent;
     [SerializeField][Tooltip("The primitives to spawn (in order of rarity)")]private GameObject[] primitives;
-    [SerializeField][Tooltip("The rarities for each element in the `primitives` array")]private float[] spawnRateRarities;
+    [SerializeField][Tooltip("The rarities (0.00 to 1.00 (%) in descanding order) for each element (except the first) in the `primitives` array")]private float[] spawnRateRarities;
     [SerializeField][Tooltip("The spawn rate per second")]private float spawnRate=0.4f;
     [SerializeField][Tooltip("The countdown time to activate frenzy mode")]private int frenzyTime=10;
     [SerializeField][Tooltip("The spawn rate per second for frenzy mode")]private float spawnRateFrenzy=0.2f;
@@ -37,16 +37,23 @@ public class GameScript:MonoBehaviour{
     private TextMeshProUGUI highscoreTMPro;
     private InputProvider input;
     private int points=0;
-    //~ get components and start timer/spawner
+    //~ reset time scale on start (before everything else)
     private void Awake(){Time.timeScale=1f;}
     private void Start(){
+        //~ sort array to escanding order and resize to primitives array length -1
+        System.Array.Sort<float>(this.spawnRateRarities,new System.Comparison<float>((f1,f2)=>f2.CompareTo(f1)));
+        System.Array.Resize<float>(ref this.spawnRateRarities,this.primitives.Length-1);
+        //~ set the despawn collider for each primitive
         foreach(GameObject primitive in this.primitives)primitive.GetComponent<DespawnDetection>().despawnColliderObject=this.spawnParent;
+        //~ get components
         this.input=this.GetComponent<InputProvider>();
         this.pointsTMPro=this.pointsDisplay.GetComponent<TextMeshProUGUI>();
         this.timeTMPro=this.timeDisplay.GetComponent<TextMeshProUGUI>();
         this.highscoreTMPro=this.highscore.GetComponent<TextMeshProUGUI>();
+        //~ reset display and timer
         this.AddPoints(0);
         this.countdown+=1;
+        //~ start invoke loops
         InvokeRepeating("SpawnPrimitive",1f,this.spawnRate);
         InvokeRepeating("TimerEvents",0f,1f);
     }
@@ -73,18 +80,17 @@ public class GameScript:MonoBehaviour{
     //~ primitive spawn/explode
     public void SpawnPrimitive(){
         // TODO externealise to another script
-        float common=Random.Range(0f,1f);
+        float rarity=Random.Range(0f,1f);
+        GameObject prim=null;
+        for(int i=this.spawnRateRarities.Length-1;i>=0;i--){
+            if(rarity<=this.spawnRateRarities[i]){
+                prim=this.primitives[i+1];
+                break;
+            }
+        }
+        if(prim==null)prim=this.primitives[0];
         Instantiate<GameObject>(
-            (
-                // TODO !not ?! possible ?!!
-                // FIXME
-                this.primitives[
-                    Mathf.FloorToInt(
-                        (1f/(float)Random.Range(1,this.primitives.Length+1))
-                        *(this.primitives.Length-1)
-                    )
-                ]
-            ),
+            prim,
             new Vector3(
                 Random.Range(-this.spawnMaxXOffset,this.spawnMaxXOffset),
                 this.spawnYOffset,
