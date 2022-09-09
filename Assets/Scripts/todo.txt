@@ -1,18 +1,1 @@
-array for common, uncommon, rare, etc
-and also another array for the probabilities % (if not of the same length, use previous probability)
-
-----
-
-extra script for spawner on the spawner obj ~ delete-collider-obj
-transform position of spawner (for spawning random/middle)
-(middle) ~ offset collider? (for despawning)
-
-# spawn area
-spreed=[5,0,0]
-offset=[0,0,0] // if collider can not be offsetted
-
-|<---{origin}--->| 5units
-
-----
-
 https://answers.unity.com/questions/577727/spawn-particles-from-a-position.html

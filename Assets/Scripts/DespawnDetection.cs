@@ -1,10 +1,9 @@
 using UnityEngine;
-using UnityEngine.Events;
 
 public class DespawnDetection:MonoBehaviour{
-    [HideInInspector]public GameObject despawnColliderObject=null;
+    [SerializeField][Tooltip("A game object with a collider trigger that, when left, destroys this gameObject")]private GameObject keepAliveTrigger;
 
     private void OnTriggerExit(Collider collider){
-        if(collider.gameObject==this.despawnColliderObject)Destroy(this.gameObject);
+        if(collider.gameObject==this.keepAliveTrigger)Destroy(this.gameObject);
     }
 }

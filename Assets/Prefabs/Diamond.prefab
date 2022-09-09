@@ -175,4 +175,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3b5469efa985a9458a05e1cd390f862, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  despawnColliderObject: {fileID: 0}
+  keepAliveTrigger: {fileID: 5350439551937882403, guid: eccd69ad56f63864ea6eeadeff9d839b, type: 3}
