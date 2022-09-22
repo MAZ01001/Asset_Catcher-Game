@@ -3,7 +3,8 @@ using UnityEngine;
 public class PrimitiveSpawner:MonoBehaviour{
     //~ inspector (private)
     [SerializeField][Tooltip("The primitives to spawn (in order of rarity ascending)")]private GameObject[] primitives;
-    [SerializeField][Tooltip("The rarities (0.00 to 1.00 (%) in descanding order) for each element (excluding the first) in the `primitives` array")]private float[] spawnRateRarities;
+    // [SerializeField][Tooltip("The spawn rate per seconds")]private float spawnRate;
+    [SerializeField][Tooltip("The rarities (0.00 to 1.00 (%) in descanding order) for each element in the `primitives` array")]private float[] spawnRateRarities;
     [SerializeField][Tooltip("The spawn origin as offset from this object for random spawning")]private Vector3 spawnOffset=new Vector3(0f,7.5f,0f);
     [SerializeField][Tooltip("The size in either direction from spawn origin for random spawning")]private Vector3 spawnAreaSize=new Vector3(7f,0f,0f);
     //~ public methods
