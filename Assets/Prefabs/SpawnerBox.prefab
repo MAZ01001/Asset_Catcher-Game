@@ -63,7 +63,11 @@ MonoBehaviour:
   - {fileID: 9219938930692707684, guid: 86c91aaf05520f34a9f3c327b808496e, type: 3}
   - {fileID: 1741373778601682927, guid: 930cdc9081f0d9944a18d8dc71f5c00f, type: 3}
   spawnRateRarities:
+  - 1
   - 0.1
   - 0.02
+  spawnRaritiePoints: 010000000300000007000000
   spawnOffset: {x: 0, y: 7.5, z: 0}
   spawnAreaSize: {x: 7, y: 0, z: 0}
+  explosionParent: {fileID: 0}
+  explosionParticle: {fileID: 771366653646786681, guid: cfef4110a5acf4644bd57ab62ed4ff1a, type: 3}
