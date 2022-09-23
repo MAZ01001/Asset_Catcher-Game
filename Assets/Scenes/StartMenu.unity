@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 73.55
+  m_fontSize: 74.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -608,7 +608,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35.55
+  m_fontSize: 35.95
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -858,7 +858,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36.8
+  m_fontSize: 37.15
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1076,17 +1076,17 @@ MonoBehaviour:
   m_MoveRepeatDelay: 0.5
   m_MoveRepeatRate: 0.1
   m_XRTrackingOrigin: {fileID: 0}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018, type: 3}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_PointAction: {fileID: -2219598377523844496, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_MoveAction: {fileID: 3198279982347090076, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_SubmitAction: {fileID: -6930331521620081454, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_CancelAction: {fileID: 2364459518708728907, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_LeftClickAction: {fileID: 2651293304257645829, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_MiddleClickAction: {fileID: -8036873301229717119, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_RightClickAction: {fileID: -4305219654312892250, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_ScrollWheelAction: {fileID: 5547240195370784407, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_TrackedDevicePositionAction: {fileID: -861061993540103817, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: -5233704792554343282, guid: bf38bda1104db464cb8be44b38908b07, type: 3}
   m_DeselectOnBackgroundClick: 1
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
