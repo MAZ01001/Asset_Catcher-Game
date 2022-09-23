@@ -39,25 +39,20 @@ public class GameScript:MonoBehaviour{
         this.highscoreTMPro=this.highscore.GetComponent<TextMeshProUGUI>();
         //~ reset display and timer
         this.AddPoints(0);
-        this.countdown+=1;
+        this.countdown++;
         //~ start invoke loops
         this.primitiveSpawner.StartSpawner(this.spawnRate,1f);
         InvokeRepeating("TimerEvents",0f,1f);
     }
+    //~ points for collision
+    public void PrimitiveCollision(GameObject primitive){this.AddPoints(this.primitiveSpawner.CollectAndGetPoints(primitive));}
     //~ time, display, frenzy mode, and game over
-    public void AddPoints(int morePoints){this.pointsTMPro.text=$"Punkte: "+(this.points+=morePoints);}
+    public void AddPoints(int morePoints){this.pointsTMPro.text=$"Punkte: {(this.points+=morePoints)}";}
     public void TimerEvents(){
         this.countdown-=1;
         if(this.countdown<=0)this.OnGameOver();
         else if(this.countdown<=this.frenzyTime)this.primitiveSpawner.ChangeRate(this.spawnRateFrenzy);
         this.timeTMPro.text=$"Zeit:      {this.countdown}";
-    }
-    //~ primitive explode effect
-    public void ExplodePrimitive(GameObject primitive){
-        // TODO explosions - in PrimitiveSpawner ?
-        // FIXME no index → -1
-        this.AddPoints((this.primitiveSpawner.GetIndexOf(primitive)*2)+1);
-        Destroy(primitive);
     }
     //~ menus
     public void OnPause(){
