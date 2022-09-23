@@ -18,7 +18,7 @@ public class PlayerMovements:MonoBehaviour{
     private bool jumpToggle=false;
     private GameScript gameScript;
     //~ get components
-    void Start(){
+    private void Start(){
         this.input=this.GetComponent<InputProvider>();
         this.sc=this.GetComponent<SphereCollider>();
         this.rb=this.GetComponent<Rigidbody>();
@@ -44,7 +44,6 @@ public class PlayerMovements:MonoBehaviour{
                 this.moveSmooth
             );
         }
-
         //~ jump
         if(this.onGround){
             if(
@@ -63,7 +62,7 @@ public class PlayerMovements:MonoBehaviour{
     private bool CheckIsLayerInMask(LayerMask mask,int layer){return(mask&(1<<layer))!=0;}
     //~ collect primitive
     private void OnTriggerEnter(Collider collider){
-        if(this.CheckIsLayerInMask(this.primitiveTriggerLayer,collider.gameObject.layer))this.gameScript.ExplodePrimitive(collider.transform.parent.gameObject);
+        if(this.CheckIsLayerInMask(this.primitiveTriggerLayer,collider.gameObject.layer))this.gameScript.PrimitiveCollision(collider.transform.parent.gameObject);
     }
     //~ ground check
     private void OnCollisionEnter(Collision collision){
