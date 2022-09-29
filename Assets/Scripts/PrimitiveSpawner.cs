@@ -2,63 +2,98 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PrimitiveSpawner:MonoBehaviour{
+    private struct Primitive{
+        [SerializeField][Tooltip("The prefab of the primitive to spawn")]                                   public GameObject primitivePrefab;
+        [SerializeField][Range(0f,1f)][Tooltip("The raritie (float from 0.00 to 1.00) for this primitive")] public float raritie;
+        [SerializeField][Min(0)][Tooltip("The amount of points when collected")]                            public int points;
+    }
+    private struct PrimitiveSpawn{
+        /// <summary> The game objects in-game of the spawned primitives </summary>
+        public List<GameObject> gameObjects;
+        /// <summary> The <paramref name="Primitive"/> of the <paramref name="gameObjects"/> in-game </summary>
+        public List<Primitive> primitives;
+        /// <summary> Creates a PrimitiveSpawn object </summary>
+        /// <param name="gameObjects"> The game objects in-game of the spawned primitives </param>
+        /// <param name="primitives"> The <paramref name="Primitive"/> of the <paramref name="gameObjects"/> in-game </param>
+        public PrimitiveSpawn(List<GameObject> gameObjects, List<Primitive> primitives){
+            this.gameObjects=gameObjects;
+            this.primitives=primitives;
+        }
+        /// <summary> Get the <paramref name="Primitive"/> from the spawned game object </summary>
+        /// <param name="gameObject"> The spawned game object in-game </param>
+        /// <returns> The <paramref name="Primitive"/> coresponding to the <paramref name="gameObject"/> in-game </returns>
+        public Primitive? GetPrimitiveByGameObject(GameObject gameObject){
+            int index=this.gameObjects.IndexOf(gameObject);
+            if(index<0)return null;
+            return this.primitives[index];
+        }
+        /// <summary> Add new gmaeobject and <paramref name="Primitive"/> to this list </summary>
+        /// <param name="gameObject"> The game objects in-game of the spawned primitives </param>
+        /// <param name="primitive"> The <paramref name="Primitive"/> of the <paramref name="gameObjects"/> in-game </param>
+        public void Add(GameObject gameObject,Primitive primitive){
+            this.gameObjects.Add(gameObject);
+            this.primitives.Add(primitive);
+        }
+        /// <summary> Remove existing game object and <paramref name="Primitive"/> from this list </summary>
+        /// <param name="gameObject"> The game objects in-game of the spawned primitives </param>
+        /// <return> True when successfully deleted and false otherwise </return>
+        public bool Remove(GameObject gameObject){
+            int index=this.gameObjects.IndexOf(gameObject);
+            if(index<0)return false;
+            this.gameObjects.RemoveAt(index);
+            this.primitives.RemoveAt(index);
+            return true;
+        }
+    }
     //~ inspector (private)
     [Header("Spawner")]
-    [SerializeField][Tooltip("The primitives to spawn (in order of rarity ascending)")]private GameObject[] primitives;
-    [SerializeField][Tooltip("The raritie (float from 0.00 to 1.00) for each element in the `primitives` array")]private float[] spawnRateRarities;
-    [SerializeField][Tooltip("The value (integer) when collected for each element in the `primitives` array")]private int[] spawnRaritiePoints;
+    [SerializeField][Tooltip("The primitives to spawn")]                                            private List<Primitive> primitives;
     [Header("Random spawn Area")]
-    [SerializeField][Tooltip("The spawn origin as offset from this object for random spawning")]private Vector3 spawnOffset=new Vector3(0f,7.5f,0f);
-    [SerializeField][Tooltip("The size in either direction from spawn origin for random spawning")]private Vector3 spawnAreaSize=new Vector3(7f,0f,0f);
+    [SerializeField][Tooltip("The spawn origin as offset from this object for random spawning")]    private Vector3 spawnOffset=new Vector3(0f,7.5f,0f);
+    [SerializeField][Tooltip("The size in either direction from spawn origin for random spawning")] private Vector3 spawnAreaSize=new Vector3(7f,0f,0f);
     [Header("Destroy Explosion")]
-    [SerializeField][Tooltip("The explosion game object to spawn (must destroy itself !)")]private GameObject explosionParticle;
+    [SerializeField][Tooltip("The explosion game object to spawn (must destroy itself !)")]         private GameObject explosionParticle;
     //~ private
-    private HashSet<GameObject> spawnedPrimitives;
+    private PrimitiveSpawn spawnedPrimitives;
     //~ private methods
-    private void Start(){
-        this.spawnedPrimitives=new HashSet<GameObject>();
-        //~ exceptions if arrays under the spawner header are not of equal lengths
-        if(this.spawnRateRarities.Length!=this.primitives.Length)throw new System.OverflowException($"[{this.gameObject.name} : PrimitiveSpawner] spawnRateRarities array is not the same length as primitives array");
-        if(this.spawnRaritiePoints.Length!=this.primitives.Length)throw new System.OverflowException($"[{this.gameObject.name} : PrimitiveSpawner] spawnRaritiesPoints array is not the same length as primitives array");
-    }
+    private void Start(){ this.spawnedPrimitives=new PrimitiveSpawn(new List<GameObject>(),new List<Primitive>()); }
     [ContextMenu(itemName:"SpawnPrimitive")]
     private void SpawnPrimitive(){
         //~ get a random percentage as decimal between 0 to 1 (inclusive)
         float rarity=Random.value;
         //~ get a random primitive based on the percentage in spawnRateRarities (rarest possible)
-        int minRarityIndex=-1;
+        int primIndex=-1;
         float minRarity=float.PositiveInfinity;
-        for(int i=0;i<this.spawnRateRarities.Length;i++){
+        for(int i=0;i<this.primitives.Count;i++){
             if(
-                this.spawnRateRarities[i]>=rarity
-                &&this.spawnRateRarities[i]<minRarity
+                this.primitives[i].raritie>=rarity
+                &&this.primitives[i].raritie<minRarity
             ){
-                minRarityIndex=i;
-                minRarity=this.spawnRateRarities[i];
+                primIndex=i;
+                minRarity=this.primitives[i].raritie;
             }
         }
-        if(minRarityIndex==-1)return;
-        GameObject prim=this.primitives[minRarityIndex];
+        if(primIndex==-1)return;
         //~ create a new instance of that primitive at a random rotation and location within the calculated spawn area
-        this.spawnedPrimitives.Add(Object.Instantiate<GameObject>(
-            prim,
-            this.transform.position
-            +this.spawnOffset
-            +new Vector3(
-                (this.spawnAreaSize.x==0f?0f:Random.Range(-this.spawnAreaSize.x,this.spawnAreaSize.x)),
-                (this.spawnAreaSize.y==0f?0f:Random.Range(-this.spawnAreaSize.y,this.spawnAreaSize.y)),
-                (this.spawnAreaSize.z==0f?0f:Random.Range(-this.spawnAreaSize.z,this.spawnAreaSize.z))
+        this.spawnedPrimitives.Add(
+            Object.Instantiate<GameObject>(
+                this.primitives[primIndex].primitivePrefab,
+                this.transform.position
+                +this.spawnOffset
+                +new Vector3(
+                    (this.spawnAreaSize.x==0f?0f:Random.Range(-this.spawnAreaSize.x,this.spawnAreaSize.x)),
+                    (this.spawnAreaSize.y==0f?0f:Random.Range(-this.spawnAreaSize.y,this.spawnAreaSize.y)),
+                    (this.spawnAreaSize.z==0f?0f:Random.Range(-this.spawnAreaSize.z,this.spawnAreaSize.z))
+                ),
+                Random.rotationUniform,
+                this.transform
             ),
-            Random.rotationUniform,
-            this.transform
-        ));
+            this.primitives[primIndex]
+        );
     }
     private void OnTriggerExit(Collider collider){
-        //~ despawn if it is a primitve in the primitives array
-        if(this.spawnedPrimitives.Remove(collider.gameObject)){
-            // this.spawnedPrimitives.Remove(collider.gameObject);
-            Object.Destroy(collider.gameObject);
-        }
+        //~ despawn if it is a primitve that was spawned
+        if(this.spawnedPrimitives.Remove(collider.gameObject))Object.Destroy(collider.gameObject);
     }
     private void OnDrawGizmosSelected(){
         Gizmos.color=Color.blue;
@@ -81,10 +116,10 @@ public class PrimitiveSpawner:MonoBehaviour{
     /// </summary>
     /// <returns> the amount of points set for that primitive or 0 if it is not a known primitive </returns>
     public int CollectAndGetPoints(GameObject primitive){
-        if(!this.spawnedPrimitives.Contains(primitive))return 0;
-        //~ get index of primitives
+        if(!this.spawnedPrimitives.gameObjects.Contains(primitive))return 0;
         int index=-1;
-        for(int i=0;i<this.primitives.Length;i++){
+        for(int i=0;i<this.primitives.Count;i++){
+            // TODO
             GameObject obj=this.primitives[i];
             if(primitive.name==$"{obj.name}(Clone)"){
                 index=i;
