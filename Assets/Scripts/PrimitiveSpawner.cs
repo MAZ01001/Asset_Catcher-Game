@@ -2,46 +2,69 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PrimitiveSpawner:MonoBehaviour{
+    [System.Serializable]
     private struct Primitive{
         [SerializeField][Tooltip("The prefab of the primitive to spawn")]                                   public GameObject primitivePrefab;
         [SerializeField][Range(0f,1f)][Tooltip("The raritie (float from 0.00 to 1.00) for this primitive")] public float raritie;
         [SerializeField][Min(0)][Tooltip("The amount of points when collected")]                            public int points;
     }
-    private struct PrimitiveSpawn{
+    private class PrimitiveSpawn{
+        /// <summary> The number of spawned primitives in this list </summary>
+        public int Count;
         /// <summary> The game objects in-game of the spawned primitives </summary>
         public List<GameObject> gameObjects;
         /// <summary> The <paramref name="Primitive"/> of the <paramref name="gameObjects"/> in-game </summary>
         public List<Primitive> primitives;
         /// <summary> Creates a PrimitiveSpawn object </summary>
-        /// <param name="gameObjects"> The game objects in-game of the spawned primitives </param>
-        /// <param name="primitives"> The <paramref name="Primitive"/> of the <paramref name="gameObjects"/> in-game </param>
-        public PrimitiveSpawn(List<GameObject> gameObjects, List<Primitive> primitives){
-            this.gameObjects=gameObjects;
-            this.primitives=primitives;
+        public PrimitiveSpawn(){
+            this.gameObjects=new List<GameObject>();
+            this.primitives=new List<Primitive>();
+            this.Count=0;
         }
         /// <summary> Get the <paramref name="Primitive"/> from the spawned game object </summary>
         /// <param name="gameObject"> The spawned game object in-game </param>
-        /// <returns> The <paramref name="Primitive"/> coresponding to the <paramref name="gameObject"/> in-game </returns>
+        /// <returns> The <paramref name="Primitive"/> coresponding to the <paramref name="gameObject"/> in-game and null otherwise </returns>
         public Primitive? GetPrimitiveByGameObject(GameObject gameObject){
             int index=this.gameObjects.IndexOf(gameObject);
-            if(index<0)return null;
+            if(index==-1)return null;
             return this.primitives[index];
         }
-        /// <summary> Add new gmaeobject and <paramref name="Primitive"/> to this list </summary>
+        /// <summary> Add new gmaeobject and <paramref name="Primitive"/> to the end of this list </summary>
         /// <param name="gameObject"> The game objects in-game of the spawned primitives </param>
         /// <param name="primitive"> The <paramref name="Primitive"/> of the <paramref name="gameObjects"/> in-game </param>
         public void Add(GameObject gameObject,Primitive primitive){
             this.gameObjects.Add(gameObject);
             this.primitives.Add(primitive);
+            this.Count++;
         }
-        /// <summary> Remove existing game object and <paramref name="Primitive"/> from this list </summary>
-        /// <param name="gameObject"> The game objects in-game of the spawned primitives </param>
+        /// <summary>
+        ///     Remove existing game object and <paramref name="Primitive"/> from this list
+        ///     <br/><i>The remaining items in the list are renumbered to replace the removed item</i>
+        /// </summary>
+        /// <param name="gameObject"> The game objects in-game of the spawned primitive </param>
         /// <return> True when successfully deleted and false otherwise </return>
         public bool Remove(GameObject gameObject){
             int index=this.gameObjects.IndexOf(gameObject);
-            if(index<0)return false;
+            if(index==-1)return false;
             this.gameObjects.RemoveAt(index);
             this.primitives.RemoveAt(index);
+            this.Count--;
+            return true;
+        }
+        /// <summary>
+        ///     Remove existing game object and <paramref name="Primitive"/> from this list
+        ///     <br/><i>The remaining items in the list are renumbered to replace the removed item</i>
+        /// </summary>
+        /// <param name="index"> The index in this list of the spawned primitive </param>
+        /// <return> True when successfully deleted and false otherwise </return>
+        public bool Remove(int index){
+            if(
+                index<0
+                ||index>=this.Count
+            )return false;
+            this.gameObjects.RemoveAt(index);
+            this.primitives.RemoveAt(index);
+            this.Count--;
             return true;
         }
     }
@@ -56,8 +79,8 @@ public class PrimitiveSpawner:MonoBehaviour{
     //~ private
     private PrimitiveSpawn spawnedPrimitives;
     //~ private methods
-    private void Start(){ this.spawnedPrimitives=new PrimitiveSpawn(new List<GameObject>(),new List<Primitive>()); }
-    [ContextMenu(itemName:"SpawnPrimitive")]
+    private void Start(){this.spawnedPrimitives=new PrimitiveSpawn();}
+    [ContextMenu("Spawn random primitive (in-game)")] //~ does work in editor, but those primitives are not added to the list and will not despawn !!
     private void SpawnPrimitive(){
         //~ get a random percentage as decimal between 0 to 1 (inclusive)
         float rarity=Random.value;
@@ -111,21 +134,12 @@ public class PrimitiveSpawner:MonoBehaviour{
     }
     //~ public methods
     /// <summary>
-    ///     gets the amount of points set for that primitive or 0 if it is not a known primitive
-    ///     <br/>also spawns an explosion and destroys the primitive
+    ///     Gets the amount of points set for that primitive or 0 if it is not a known primitive
+    ///     <br/>Also spawns an explosion and destroys the primitive
     /// </summary>
-    /// <returns> the amount of points set for that primitive or 0 if it is not a known primitive </returns>
+    /// <returns> The amount of points set for that primitive or 0 if it is not a known primitive </returns>
     public int CollectAndGetPoints(GameObject primitive){
-        if(!this.spawnedPrimitives.gameObjects.Contains(primitive))return 0;
-        int index=-1;
-        for(int i=0;i<this.primitives.Count;i++){
-            // TODO
-            GameObject obj=this.primitives[i];
-            if(primitive.name==$"{obj.name}(Clone)"){
-                index=i;
-                break;
-            }
-        }
+        int index=this.spawnedPrimitives.gameObjects.IndexOf(primitive);
         if(index==-1)return 0;
         //~ spawn explosion
         GameObject explosionObj=Object.Instantiate<GameObject>(
@@ -141,31 +155,37 @@ public class PrimitiveSpawner:MonoBehaviour{
         MeshFilter primitiveMeshFilter=primitive.GetComponent<MeshFilter>();
         if(primitiveRenderer!=null)explosionRenderer.material=primitiveRenderer.sharedMaterial;
         if(primitiveMeshFilter!=null)explosionRenderer.mesh=primitiveMeshFilter.sharedMesh;
-        // TODO rotation animation for rarer primitives ?
+        // TODO rotation animation for rarer primitives ? set in explosion particle system ?
+        //~ get points
+        int points=this.spawnedPrimitives.primitives[index].points;
         //~ despawn primitive
-        this.spawnedPrimitives.Remove(primitive);
         Object.Destroy(primitive);
+        this.spawnedPrimitives.Remove(index);
         //~ return points
-        return this.spawnRaritiePoints[index];
+        return points;
     }
-    /// <summary> starts the spawner after given delay and spawn rate </summary>
-    /// <param name="spawnRate"> the spawn rate per second </param>
-    /// <param name="delay"> a one time delay in seconds to start the spawning </param>
+    /// <summary> Starts the spawner after given delay and spawn rate </summary>
+    /// <param name="spawnRate"> The spawn rate per second </param>
+    /// <param name="delay"> A one time delay in seconds to start the spawning </param>
     public void StartSpawner(float spawnRate,float delay=0f){InvokeRepeating("SpawnPrimitive",delay,spawnRate);}
-    /// <summary> stops the spawning of new objects </summary>
+    /// <summary> Stops the spawning of new objects </summary>
+    [ContextMenu("Stop spawner (in-game)")] //~ does not work in the editor since there is no spawner instance
     public void StopSpawner(){CancelInvoke("SpawnPrimitive");}
-    /// <summary> change the spawn rate </summary>
-    /// <param name="spawnRate"> the new spawn rate in seconds </param>
+    /// <summary>
+    ///     Change the spawn rate
+    ///     <br/>Automatically stops and restarts the spawning with the new <paramref name="spawnRate"/>
+    /// </summary>
+    /// <param name="spawnRate"> The new spawn rate in seconds </param>
     public void ChangeRate(float spawnRate){
         this.StopSpawner();
         this.StartSpawner(spawnRate);
     }
-    /// <summary> destroys all currently existing primitives </summary>
-    [ContextMenu(itemName:"DestroyAllSpawned")]
+    /// <summary> Destroys all currently existing primitives </summary>
+    [ContextMenu("Destroy all spawned (in-game)")] //~ does not work in the editor because there is no instance of this list to delete from
     public void DestroyAllSpawned(){
-        foreach(GameObject obj in this.spawnedPrimitives){
-            this.spawnedPrimitives.Remove(obj);
-            Object.Destroy(obj);
+        List<GameObject> despawnList=new List<GameObject>(this.spawnedPrimitives.gameObjects);
+        foreach(GameObject obj in despawnList){
+            if(this.spawnedPrimitives.Remove(obj))Object.Destroy(obj);
         }
     }
 }
