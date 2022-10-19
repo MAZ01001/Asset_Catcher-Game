@@ -148,6 +148,11 @@ public class PrimitiveSpawner:MonoBehaviour{
             Quaternion.identity,
             this.transform
         );
+        //~ enable the rotation for the explosion particle when rarity is below 50%
+        if(this.spawnedPrimitives.primitives[index].raritie<0.5f){
+            ParticleSystem.RotationOverLifetimeModule explosionRotation=explosionObj.GetComponent<ParticleSystem>().rotationOverLifetime;
+            explosionRotation.enabled=true;
+        }
         //~ set mesh and material of primitive for particle explosion
         ParticleSystemRenderer explosionRenderer=explosionObj.GetComponent<ParticleSystemRenderer>();
         explosionRenderer.enabled=true;
@@ -155,7 +160,6 @@ public class PrimitiveSpawner:MonoBehaviour{
         MeshFilter primitiveMeshFilter=primitive.GetComponent<MeshFilter>();
         if(primitiveRenderer!=null)explosionRenderer.material=primitiveRenderer.sharedMaterial;
         if(primitiveMeshFilter!=null)explosionRenderer.mesh=primitiveMeshFilter.sharedMesh;
-        // TODO rotation animation for rarer primitives ? set in explosion particle system ?
         //~ get points
         int points=this.spawnedPrimitives.primitives[index].points;
         //~ despawn primitive
