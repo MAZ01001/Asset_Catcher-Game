@@ -17,8 +17,8 @@ public class PrimitiveSpawner:MonoBehaviour{
         public List<Primitive> primitives;
         /// <summary> Creates a PrimitiveSpawn object </summary>
         public PrimitiveSpawn(){
-            this.gameObjects=new List<GameObject>();
-            this.primitives=new List<Primitive>();
+            this.gameObjects=new List<GameObject>(200);
+            this.primitives=new List<Primitive>(200);
             this.Count=0;
         }
         /// <summary> Get the <paramref name="Primitive"/> from the spawned game object </summary>
