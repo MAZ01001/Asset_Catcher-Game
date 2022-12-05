@@ -60,13 +60,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   primitives:
   - primitivePrefab: {fileID: 6935849936085445891, guid: 90f2ee885a305dc4086053bae592efcc, type: 3}
-    raritie: 1
+    rarity: 1
     points: 1
   - primitivePrefab: {fileID: 9219938930692707684, guid: 86c91aaf05520f34a9f3c327b808496e, type: 3}
-    raritie: 0.1
+    rarity: 0.1
     points: 3
   - primitivePrefab: {fileID: 1741373778601682927, guid: 930cdc9081f0d9944a18d8dc71f5c00f, type: 3}
-    raritie: 0.02
+    rarity: 0.02
     points: 7
   spawnOffset: {x: 0, y: 7.5, z: 0}
   spawnAreaSize: {x: 7, y: 0, z: 0}
