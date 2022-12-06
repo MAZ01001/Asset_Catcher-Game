@@ -189,10 +189,8 @@ public class PrimitiveSpawner : MonoBehaviour{
         //~ set mesh and material of primitive for particle explosion
         ParticleSystemRenderer explosionRenderer = explosionObj.GetComponent<ParticleSystemRenderer>();
         explosionRenderer.enabled = true;
-        Renderer primitiveRenderer = primitive.GetComponent<Renderer>();
-        MeshFilter primitiveMeshFilter = primitive.GetComponent<MeshFilter>();
-        if(primitiveRenderer != null) explosionRenderer.material = primitiveRenderer.sharedMaterial;
-        if(primitiveMeshFilter != null) explosionRenderer.mesh = primitiveMeshFilter.sharedMesh;
+        if(primitive.GetComponent<MeshFilter>() is MeshFilter primitiveMeshFilter and not null) explosionRenderer.mesh = primitiveMeshFilter.sharedMesh;
+        if(primitive.GetComponent<Renderer>() is Renderer primitiveRenderer and not null) explosionRenderer.material = primitiveRenderer.sharedMaterial;
         //~ get points
         int points = this.spawnedPrimitives.primitives[index].points;
         //~ despawn primitive

@@ -2,17 +2,15 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class InputProvider : MonoBehaviour{
-    //~ inspector (private)
-    [SerializeField][Tooltip("The game manager in scene")] private GameObject gameManager;
     //~ public
     public float move{get; private set;}
     public bool jumpPressed{get; private set;}
     //~ private
-    private GameScript gameScript;
+    private GameManager gameManager;
     //~ unity methods (private)
     private void Start(){
         //~ initiate variables
-        this.gameScript = this.gameManager.GetComponent<GameScript>();
+        this.gameManager = Object.FindObjectOfType<GameManager>();
     }
     private void OnEnable(){
         //~ initial cursor lock
@@ -33,10 +31,10 @@ public class InputProvider : MonoBehaviour{
     }
     private void OnJump(InputValue value) => this.jumpPressed = value.isPressed;
     private void OnPause(InputValue value){
-        if(this.gameScript.gameOver) return;
+        if(this.gameManager.gameOver) return;
         if(value.isPressed){
-            if(Time.timeScale > 0.001f) this.gameScript.OnPause();
-            else this.gameScript.OnResume();
+            if(Time.timeScale > 0.001f) this.gameManager.OnPause();
+            else this.gameManager.OnResume();
         }
     }
 }

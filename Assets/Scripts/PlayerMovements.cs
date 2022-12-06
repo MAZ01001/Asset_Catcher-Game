@@ -4,12 +4,12 @@ public class PlayerMovements : MonoBehaviour{
     //~ inspector (private)
     [SerializeField][Tooltip("The ground collision layer")]                           private LayerMask groundLayer;
     [SerializeField][Tooltip("The primitive trigger layer")]                          private LayerMask primitiveTriggerLayer;
-    [SerializeField][Min(0f)][Tooltip("The jump height")]                             private float jumpHeight = 6f;
+    [SerializeField][Min(0f)][Tooltip("The jump height")]                             private float jumpHeight = 5f;
     [SerializeField][Min(0f)][Tooltip("The movement speed")]                          private float moveSpeed = 10f;
-    [SerializeField][Min(0f)][Tooltip("The movement smoothing value")]                private float moveSmooth = 0.1f;
+    [SerializeField][Min(0f)][Tooltip("The movement smoothing value")]                private float moveSmooth = 0.08f;
     [SerializeField][Min(0f)][Tooltip("The movement multiplier for in-air movement")] private float airMoveMultiplier = 0.7f;
     //~ private
-    private GameScript gameScript;
+    private GameManager gameManager;
     private InputProvider input;
     private SphereCollider sc;
     private Rigidbody rb;
@@ -23,7 +23,7 @@ public class PlayerMovements : MonoBehaviour{
         this.input = this.GetComponent<InputProvider>();
         this.sc = this.GetComponent<SphereCollider>();
         this.rb = this.GetComponent<Rigidbody>();
-        this.gameScript = Object.FindObjectOfType<GameScript>();
+        this.gameManager = Object.FindObjectOfType<GameManager>();
     }
     private void FixedUpdate(){
         //~ move
@@ -57,7 +57,7 @@ public class PlayerMovements : MonoBehaviour{
     }
     private void OnTriggerEnter(Collider collider){
         //~ collect primitive
-        if(this.CheckIsLayerInMask(this.primitiveTriggerLayer, collider.gameObject.layer)) this.gameScript.PrimitiveCollision(collider.transform.parent.gameObject);
+        if(this.CheckIsLayerInMask(this.primitiveTriggerLayer, collider.gameObject.layer)) this.gameManager.PrimitiveCollision(collider.transform.parent.gameObject);
     }
     private void OnCollisionEnter(Collision collision){
         //~ ground check → true
