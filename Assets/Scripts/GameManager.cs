@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class GameScript : MonoBehaviour{
+public class GameManager : MonoBehaviour{
     //~ inspector (private)
     [Header("Player")]
     [SerializeField][Tooltip("The player game object")]                                 private GameObject player;
@@ -15,9 +15,9 @@ public class GameScript : MonoBehaviour{
     [SerializeField][Tooltip("The highscore ui element")]                               private GameObject highscore;
     [Header("Spawner")]
     [SerializeField][Tooltip("The spawner that also has the spawner script")]           private GameObject spawner;
-    [SerializeField][Tooltip("The spawn rate per second")]                              private float spawnRate = 0.4f;
-    [SerializeField][Tooltip("The countdown time to activate frenzy mode")]             private int frenzyTime = 10;
-    [SerializeField][Tooltip("The spawn rate per second for frenzy mode")]              private float spawnRateFrenzy = 0.2f;
+    [SerializeField][Min(0f)][Tooltip("The spawn rate per second")]                     private float spawnRate = 0.4f;
+    [SerializeField][Min(1f)][Tooltip("The countdown time to activate frenzy mode")]    private int frenzyTime = 10;
+    [SerializeField][Min(0f)][Tooltip("The spawn rate per second for frenzy mode")]     private float spawnRateFrenzy = 0.2f;
     //~ public
     [HideInInspector] public bool gameOver = false;
     [HideInInspector] public Vector3 PlayerPos => this.player.transform.position;
@@ -52,7 +52,7 @@ public class GameScript : MonoBehaviour{
     public void PrimitiveCollision(GameObject primitive) => this.AddPoints(this.primitiveSpawner.CollectAndGetPoints(primitive));
     /// <summary> Increase <see cref="points"/> by <paramref name="morePoints"/> and update the points ui </summary>
     /// <param name="morePoints"> The number of points to add </param>
-    public void AddPoints(int morePoints) => this.pointsTMPro.text = $"Punkte: {(this.points += morePoints)}";
+    public void AddPoints(int morePoints) => this.pointsTMPro.text = $"Points: {(this.points += morePoints)}";
     /// <summary>
     ///     Handles the timer events like
     ///     <br/>countdown and update timer ui,
@@ -60,10 +60,10 @@ public class GameScript : MonoBehaviour{
     ///     <br/>and call <see cref="OnGameOver"> when timer reaches 0
     /// </summary>
     public void TimerEvents(){
-        this.countdown -= 1;
+        this.countdown--;
         if(this.countdown <= 0) this.OnGameOver();
         else if(this.countdown <= this.frenzyTime) this.primitiveSpawner.ChangeRate(this.spawnRateFrenzy);
-        this.timeTMPro.text = $"Time:      {this.countdown}";
+        this.timeTMPro.text = $"Time:   {this.countdown}";
     }
     /// <summary> Pauses the game and activates the pause menu </summary>
     public void OnPause(){
