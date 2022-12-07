@@ -189,6 +189,7 @@ public class PrimitiveSpawner : MonoBehaviour{
         //~ set mesh and material of primitive for particle explosion
         ParticleSystemRenderer explosionRenderer = explosionObj.GetComponent<ParticleSystemRenderer>();
         explosionRenderer.enabled = true;
+        // BUG meshCount shows that the diamond mesh is not added ¯\_(ツ)_/¯ only in build !?
         if(primitive.GetComponent<MeshFilter>() is MeshFilter primitiveMeshFilter and not null) explosionRenderer.mesh = primitiveMeshFilter.sharedMesh;
         if(primitive.GetComponent<Renderer>() is Renderer primitiveRenderer and not null) explosionRenderer.material = primitiveRenderer.sharedMaterial;
         //~ get points
