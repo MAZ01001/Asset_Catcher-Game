@@ -7,7 +7,7 @@ public class PlayerMovements : MonoBehaviour{
     [SerializeField][Min(0f)][Tooltip("The jump height")]                             private float jumpHeight = 5f;
     [SerializeField][Min(0f)][Tooltip("The movement speed")]                          private float moveSpeed = 10f;
     [SerializeField][Min(0f)][Tooltip("The movement smoothing value")]                private float moveSmooth = 0.08f;
-    [SerializeField][Min(0f)][Tooltip("The movement multiplier for in-air movement")] private float airMoveMultiplier = 0.7f;
+    [SerializeField][Min(0f)][Tooltip("The movement multiplier for in-air movement")] private float airMoveMultiplier = 0.8f;
     //~ private
     private GameManager gameManager;
     private InputProvider input;

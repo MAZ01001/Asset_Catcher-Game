@@ -77,6 +77,7 @@ public class PrimitiveSpawner : MonoBehaviour{
     [SerializeField][Tooltip("The size in either direction from spawn origin for random spawning")] private Vector3 spawnAreaSize = new Vector3(7f, 0f, 0f);
     [Header("Destroy Explosion")]
     [SerializeField][Tooltip("The explosion game object to spawn (must destroy itself !)")]         private GameObject explosionParticle;
+    [SerializeField][Min(0f)][Tooltip("The time the dissolve effect should be animated")]           private float dissolveTimer = 0.5f;
     //~ private
     private PrimitiveSpawn spawnedPrimitives;
     //~ unity methods (private)
@@ -165,6 +166,16 @@ public class PrimitiveSpawner : MonoBehaviour{
             this.primitives[primIndex]
         );
     }
+    /// <summary> Animates the dissolve shader effect on the <paramref name="material"/> over <paramref name="time"/> seconds </summary>
+    /// <param name="material"> The rendered material of the primitive (using the DissolveShader shader) </param>
+    /// <param name="time"> The time in seconds for the animation duration </param>
+    private System.Collections.IEnumerator dissolveShader(Material material, float time){
+        float timer = 0;
+        do{
+            material.SetFloat("_Dissolve", Mathf.Lerp(-0.1f, 1f, (timer += Time.deltaTime) / time));
+            yield return null;
+        }while(timer <= time);
+    }
     //~ public methods
     /// <summary>
     ///     Gets the amount of points set for that primitive or 0 if it is not a known primitive
@@ -193,8 +204,13 @@ public class PrimitiveSpawner : MonoBehaviour{
         if(primitive.GetComponent<Renderer>() is Renderer primitiveRenderer and not null) explosionRenderer.material = primitiveRenderer.sharedMaterial;
         //~ get points
         int points = this.spawnedPrimitives.primitives[index].points;
-        //~ despawn primitive
-        Object.Destroy(primitive);
+        //~ freeze movement and deactivate all colliders and triggers of primitive
+        primitive.GetComponent<Rigidbody>().isKinematic = true;
+        foreach(Collider collider in primitive.GetComponentsInChildren<Collider>()) collider.enabled = false;
+        //~ start dissolve shader animation coroutine
+        StartCoroutine(this.dissolveShader(primitive.GetComponent<Renderer>().material, this.dissolveTimer));
+        //~ despawn primitive (after shader animation finishes)
+        Object.Destroy(primitive, this.dissolveTimer + 0.1f);
         this.spawnedPrimitives.Remove(index);
         return points;
     }

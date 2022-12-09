@@ -4064,7 +4064,7 @@ MonoBehaviour:
   jumpHeight: 5
   moveSpeed: 10
   moveSmooth: 0.08
-  airMoveMultiplier: 0.7
+  airMoveMultiplier: 0.8
 --- !u!1 &2118524607
 GameObject:
   m_ObjectHideFlags: 0
